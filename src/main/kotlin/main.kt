@@ -1,7 +1,7 @@
 import java.util.*
 
 data class Post (
-    val id: Long,
+    var id: Int,
     val ownerId: Int,
     val fromId: Int,
     val createdBy: Int,
@@ -29,4 +29,21 @@ data class Post (
 
 object WallService {
     private var posts = emptyArray<Post>()
+    private var nextId = 0;
+
+    fun add(post: Post): Post {
+        post.id = nextId++
+        posts += post
+        return post
+    }
+
+    fun update(post: Post): Boolean {
+        for ((index, p) in posts.withIndex()) {
+            if (p.id == post.id) {
+                posts[index] = post.copy(ownerId = p.ownerId, date = p.date)
+                return true
+            }
+        }
+        return false
+    }
 }
