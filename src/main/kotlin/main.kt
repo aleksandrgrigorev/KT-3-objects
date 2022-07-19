@@ -12,7 +12,7 @@ data class Post (
     val likes: Likes = Likes(),
     val reposts: Int = 0,
     val views: Int = 0,
-    val original: Post?,
+    val original: Post? = null,
     val signerId: Int = 0,
     val canPin: Boolean = true,
     val canDelete: Boolean = true,
