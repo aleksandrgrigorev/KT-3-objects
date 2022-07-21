@@ -1,47 +1,27 @@
-data class Post (
-    var id: Int = 0,
-    val ownerId: Int = 0,
+class PostNotFoundException(message: String): RuntimeException(message)
+
+data class Comment (
+    val id: Int = 0,
     val fromId: Int = 0,
-    val createdBy: Int = 0,
-    val date: Long = System.currentTimeMillis() / 1000L,
-    val text: String = "text",
-    val replyOwnerId: Int = 0,
-    val replyPostId: Int = 0,
-    val friendsOnly: Boolean = true,
-    val comments: Comments = Comments(),
-    val likes: Likes = Likes(),
-    val reposts: Int = 0,
-    val views: Int = 0,
-    val original: Post? = null,
-    val signerId: Int = 0,
-    val canPin: Boolean = true,
-    val canDelete: Boolean = true,
-    val canEdit: Boolean = true,
-    val isPinned: Boolean = false,
-    val markedAsAds: Boolean = false,
-    val isFavorite: Boolean = false,
-    val postponedId: Int = 0,
-    val attachments: Array<Attachment> = emptyArray()
+    val date: Int = 1,
+    val text: String = "Текст комментария",
+    val replyToUser: Int = 1,
+    val replyToComment: Int = 1,
+    val attachments: Attachment = PhotoAttachment(),
+    val thread: CommentThread = CommentThread()
 )
 
-data class Comments (
+data class CommentThread (
     val count: Int = 0,
     val canPost: Boolean = true,
-    val groupsCanPost: Boolean = true,
-    val canClose: Boolean = true,
-    val canOpen: Boolean = true
-)
-
-data class Likes (
-    val count: Int = 0,
-    val userLikes: Int = 0,
-    val canLike: Boolean = true,
-    val canPublish: Boolean = true
+    val showReplyButton : Boolean = true,
+    val groupsCanPost: Boolean = true
 )
 
 object WallService {
-    private var posts = emptyArray<Post>()
     private var nextId = 0;
+    private var posts = emptyArray<Post>()
+    private var comments = emptyArray<Comment>()
 
     fun add(post: Post): Post {
         post.id = ++nextId
@@ -57,5 +37,15 @@ object WallService {
             }
         }
         return false
+    }
+
+    fun createComment(postId: Int, comment: Comment): Comment {
+        for ((index, p) in posts.withIndex()) {
+            if (p.id == postId) {
+                comments += comment.copy(text = "новый коммент $index")
+                return comment
+            }
+        }
+        throw PostNotFoundException("no post with $postId")
     }
 }
