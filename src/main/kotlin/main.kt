@@ -20,7 +20,8 @@ data class Post (
     val isPinned: Boolean = false,
     val markedAsAds: Boolean = false,
     val isFavorite: Boolean = false,
-    val postponedId: Int = 0
+    val postponedId: Int = 0,
+    val attachments: Array<Attachment> = emptyArray()
 )
 
 data class Comments (
