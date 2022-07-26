@@ -1,10 +1,10 @@
-class PostNotFoundException(message: String): RuntimeException(message)
+class PostNotFoundException(message: String) : RuntimeException(message)
 
 data class Comment (
     val id: Int = 0,
     val fromId: Int = 0,
     val date: Int = 1,
-    val text: String = "Текст комментария",
+    val text: String = "Comment text",
     val replyToUser: Int = 1,
     val replyToComment: Int = 1,
     val attachments: Attachment = PhotoAttachment(),
@@ -42,10 +42,10 @@ object WallService {
     fun createComment(postId: Int, comment: Comment): Comment {
         for ((index, p) in posts.withIndex()) {
             if (p.id == postId) {
-                comments += comment.copy(text = "новый коммент $index")
+                comments += comment.copy(text = "New comment $index")
                 return comment
             }
         }
-        throw PostNotFoundException("no post with $postId")
+        throw PostNotFoundException("No post with $postId")
     }
 }
