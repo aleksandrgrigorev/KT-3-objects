@@ -4,18 +4,19 @@ class NoteService(
     private val noteCommentService: NoteCommentService
 ): CrudService<Note>() {
 
-    fun add(title: String, text: String, privacy: Int, commentPrivacy: Int,
-            privacyView: String, privacyComment: String, ownerId: Int): Int {
+    fun add(
+        title: String, text: String, privacy: Int, commentPrivacy: Int,
+        privacyView: String, privacyComment: String, ownerId: Int, now: LocalDate
+    ): Int {
         val note = Note(0, title, text, privacy, commentPrivacy,
-            privacyView, privacyComment, ownerId, LocalDate.now())
+            privacyView, privacyComment, ownerId, now)
         return create(note)
     }
 
     override fun delete(noteId: Int): Boolean {
         val note = read(noteId) ?: return false
         val ownerId = note.ownerId
-        delete(noteId)
-        if (delete(noteId)) {
+        if (super.delete(noteId)) {
             val noteComments = noteCommentService.getComments(noteId, ownerId, count = null, sort = null)
             for (noteComment in noteComments) {
                 noteComment.deleted = true

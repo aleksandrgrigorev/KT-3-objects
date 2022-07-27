@@ -3,7 +3,7 @@ import java.time.LocalDate
 abstract class Identifiable (open var id: Int = 0)
 
 data class Note (
-    override var id: Int,
+    override var id: Int = 0,
     val title: String = "Note title",
     val text: String = "Note text",
     val privacy: Int = 3,
@@ -15,7 +15,7 @@ data class Note (
 ) : Identifiable(id)
 
 data class NoteComment (
-    override var id: Int,
+    override var id: Int = 0,
     val noteId: Int = 1,
     val ownerId: Int = 1,
     val replyTo: Int = 2,
