@@ -29,13 +29,14 @@ class NoteServiceTest {
     }
 
     @Test
-    fun delete_withComments() {
+    fun delete_true_withComments() {
         val noteCommentService = NoteCommentService()
         val noteService = NoteService(noteCommentService)
         val ownerId = 1
+        val message = "Comment text"
         val noteId = noteService.add("title", "text", 3, 3, "all",
             "all", ownerId, LocalDate.now())
-        noteCommentService.createComment(noteId, ownerId, 2,"Comment text", "Unique ID")
+        noteCommentService.createComment(noteId, ownerId, 2, message, "Unique ID", LocalDate.now())
         noteService.delete(noteId)
 
         val result = noteCommentService.getComments(noteId, ownerId, null, null)
@@ -115,6 +116,29 @@ class NoteServiceTest {
         val expected = mutableListOf(note1, note2)
 
         val result = noteService.get(mutableListOf(noteId1, noteId2), ownerId, 2, 1)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun get_filtered() {
+        val noteService = NoteService(noteCommentService = NoteCommentService())
+        val ownerId = 1
+        val userId = 2
+        val firstDate = LocalDate.of(2022, 7, 26)
+        val secondDate = LocalDate.of(2022, 7, 27)
+        val noteId1 = noteService.add("title", "text", 3, 3, "all",
+            "all", userId, firstDate)
+        val noteId2 = noteService.add("title", "text", 3, 3, "all",
+            "all", ownerId, secondDate)
+        val note1 = Note(noteId1, "title", "text", 3, 3, "all",
+            "all", userId, firstDate)
+        val note2 = Note(noteId2, "title", "text", 3, 3, "all",
+            "all", ownerId, secondDate)
+
+        val expected = mutableListOf(note1)
+
+        val result = noteService.get(mutableListOf(noteId1, noteId2), userId, 2, 1)
 
         assertEquals(expected, result)
     }

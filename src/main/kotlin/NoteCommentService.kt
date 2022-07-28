@@ -2,15 +2,14 @@ import java.time.LocalDate
 
 class NoteCommentService: CrudService<NoteComment>() {
 
-    fun createComment(noteId: Int, ownerId: Int, replyTo: Int, message: String, guid: String): Int {
-        val noteComment = NoteComment(0, noteId, ownerId, replyTo, message, guid, creationDate = LocalDate.now())
+    fun createComment(noteId: Int, ownerId: Int, replyTo: Int, message: String, guid: String, now: LocalDate): Int {
+        val noteComment = NoteComment(0, noteId, ownerId, replyTo, message, guid, creationDate = now)
         return create(noteComment)
     }
 
-    fun editComment(commentId: Int, ownerId: Int, message: String): Boolean {
-        val noteComment = NoteComment(commentId, ownerId = ownerId, message = message, creationDate = LocalDate.now())
-        val oldNoteComment = getById(commentId, ownerId)
-        if (oldNoteComment == null || oldNoteComment.deleted) return false
+    fun editComment(commentId: Int, ownerId: Int, message: String, now: LocalDate): Boolean {
+        val noteComment = NoteComment(commentId, ownerId = ownerId, message = message, creationDate = now)
+        val oldNoteComment = getById(commentId, ownerId) ?: return false
         return update(noteComment)
     }
 
@@ -33,13 +32,12 @@ class NoteCommentService: CrudService<NoteComment>() {
 
     fun deleteComment(commentId: Int, ownerId: Int): Boolean {
         val noteComment = getById(commentId, ownerId) ?: return false
-        if (noteComment.deleted) return false
         noteComment.deleted = true
         return true
     }
 
     fun restoreComment(commentId: Int, ownerId: Int): Boolean {
-        val noteComment = getById(commentId, ownerId) ?: return false
+        val noteComment = getByIdWithDeleted(commentId, ownerId) ?: return false
         if (!noteComment.deleted) return false
         noteComment.deleted = false
         return true
@@ -48,6 +46,14 @@ class NoteCommentService: CrudService<NoteComment>() {
     private fun getById(commentId: Int, ownerId: Int): NoteComment? {
         val noteComment = read(commentId)
         if (noteComment != null && !noteComment.deleted && noteComment.ownerId == ownerId) {
+            return noteComment
+        }
+        return null
+    }
+
+    private fun getByIdWithDeleted(commentId: Int, ownerId: Int): NoteComment? {
+        val noteComment = read(commentId)
+        if (noteComment != null && noteComment.ownerId == ownerId) {
             return noteComment
         }
         return null

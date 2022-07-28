@@ -34,11 +34,11 @@ class NoteService(
 
     fun get(ids: MutableList<Int>, userId: Int, count: Int, sort: Int): List<Note> {
         var notes = read(ids)
-        notes = notes.filter { n -> n.ownerId == userId }
+        notes = notes.filter { it.ownerId == userId }
         if (sort == 1) {
-            notes = notes.sortedBy { n -> n.creationDate }
+            notes = notes.sortedBy { it.creationDate }
         } else if (sort == 0) {
-            notes = notes.sortedByDescending { n -> n.creationDate }
+            notes = notes.sortedByDescending { it.creationDate }
         }
 
         return if (notes.size <= count) {
