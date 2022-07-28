@@ -18,9 +18,9 @@ class NoteCommentService: CrudService<NoteComment>() {
         noteComments = noteComments.filter { comment -> comment.noteId == noteId && comment.ownerId == ownerId &&
                 !comment.deleted}
         if (sort == 1) {
-            noteComments = noteComments.sortedByDescending { nc -> nc.creationDate }
+            noteComments = noteComments.sortedByDescending { it.creationDate }
         } else if (sort == 0) {
-            noteComments = noteComments.sortedBy { nc -> nc.creationDate }
+            noteComments = noteComments.sortedBy { it.creationDate }
         }
 
         return if (count == null || noteComments.size <= count) {
